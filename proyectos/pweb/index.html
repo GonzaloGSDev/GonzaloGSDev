@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aura | Agencia Digital</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* --- 1. VARIABLES & RESET --- */
+        :root {
+            --bg-body: #050505;
+            --text-main: #ffffff;
+            --text-muted: #a1a1aa;
+            --primary: #6366f1;
+            --secondary: #ec4899;
+            --primary-glow: rgba(99, 102, 241, 0.4);
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
+        .gradient-text {
+            background: linear-gradient(135deg, #fff 0%, #6366f1 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .btn { display: inline-block; padding: 12px 32px; border-radius: 50px; font-weight: 700; text-decoration: none; transition: 0.3s; font-size: 0.95rem; }
+        .btn-primary { background: var(--primary); color: #fff; box-shadow: 0 0 20px var(--primary-glow); }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 30px var(--primary-glow); }
+        .btn-outline { background: transparent; border: 1px solid var(--border); color: #fff; margin-left: 10px; }
+        .btn-outline:hover { border-color: #fff; background: rgba(255,255,255,0.1); }
+
+        /* --- NAVBAR --- */
+        nav { position: fixed; top: 0; width: 100%; z-index: 1000; padding: 1.5rem 0; background: rgba(5, 5, 5, 0.8); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); }
+        .nav-container { display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.5rem; font-weight: 800; letter-spacing: -1px; display: flex; align-items: center; gap: 10px; }
+        .nav-links { display: flex; gap: 30px; }
+        .nav-links a { color: var(--text-muted); text-decoration: none; font-weight: 500; transition: 0.3s; }
+        .nav-links a:hover { color: #fff; }
+
+        /* --- HERO SECTION --- */
+        .hero { position: relative; padding: 160px 0 100px; text-align: center; overflow: hidden; }
+        .hero-glow { position: absolute; top: -20%; left: 50%; transform: translateX(-50%); width: 600px; height: 600px; background: radial-gradient(circle, var(--primary-glow) 0%, transparent 70%); opacity: 0.6; z-index: -1; pointer-events: none; }
+        .hero h1 { font-size: 4rem; line-height: 1.1; font-weight: 800; margin-bottom: 1.5rem; letter-spacing: -2px; }
+        .hero p { font-size: 1.25rem; color: var(--text-muted); max-width: 600px; margin: 0 auto 2.5rem; }
+
+        /* --- VISUALIZADOR LIVE (EL CUADRADO) --- */
+        .hero-visual-wrapper { margin-top: 4rem; position: relative; display: inline-block; perspective: 1000px; }
+        .browser-window {
+            width: 900px; max-width: 100%; height: 500px;
+            background: rgba(20, 20, 25, 0.6); backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 16px;
+            box-shadow: 0 40px 80px -20px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.05) inset;
+            display: flex; flex-direction: column; transform: rotateX(5deg); transition: transform 0.5s ease;
+            overflow: hidden; position: relative;
+        }
+        .browser-window:hover { transform: rotateX(0deg) scale(1.02); }
+        .window-header { padding: 12px 20px; background: rgba(255,255,255,0.03); border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; gap: 15px; }
+        .dots { display: flex; gap: 6px; } .dot { width: 10px; height: 10px; border-radius: 50%; } .red { background: #ff5f56; } .yellow { background: #ffbd2e; } .green { background: #27c93f; }
+        .address-bar { flex: 1; background: rgba(0,0,0,0.3); border-radius: 6px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; color: #555; font-family: monospace; }
+        .window-body { flex: 1; padding: 0; display: flex; }
+        .sidebar-code { width: 250px; background: rgba(0,0,0,0.4); border-right: 1px solid rgba(255,255,255,0.05); padding: 20px; text-align: left; font-family: monospace; font-size: 0.8rem; color: #7dd3fc; line-height: 1.6; }
+        .code-line { margin-bottom: 5px; opacity: 0.7; } .keyword { color: #c084fc; } .string { color: #4ade80; }
+        .main-visual { flex: 1; padding: 30px; display: flex; flex-direction: column; gap: 20px; background: radial-gradient(circle at top right, rgba(99, 102, 241, 0.05), transparent 60%); }
+        .dash-header { height: 40px; width: 40%; background: rgba(255,255,255,0.1); border-radius: 8px; margin-bottom: 10px; }
+        .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; height: 100%; }
+        .dash-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 15px; display: flex; flex-direction: column; justify-content: flex-end; position: relative; overflow: hidden; }
+        .bars-container { display: flex; align-items: flex-end; gap: 8px; height: 80px; width: 100%; }
+        .bar { flex: 1; background: var(--primary); border-radius: 4px; opacity: 0.7; animation: growBar 2s infinite ease-in-out alternate; }
+        .bar:nth-child(2) { animation-delay: 0.2s; background: var(--secondary); } .bar:nth-child(3) { animation-delay: 0.4s; } .bar:nth-child(4) { animation-delay: 0.1s; background: var(--secondary); }
+        @keyframes growBar { 0% { height: 30%; } 100% { height: 90%; } }
+        
+        .floating-badge { position: absolute; padding: 10px 20px; background: rgba(20, 20, 20, 0.9); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: #fff; font-size: 0.85rem; font-weight: 700; box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: flex; align-items: center; gap: 10px; animation: float 4s ease-in-out infinite; z-index: 10; }
+        .badge-left { top: 20%; left: -40px; } .badge-right { bottom: 30%; right: -30px; animation-delay: 1.5s; }
+        .icon-box { width: 25px; height: 25px; background: var(--primary); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+
+        /* --- RESTO DEL CSS --- */
+        .clients { padding: 3rem 0; border-bottom: 1px solid var(--border); }
+        .clients-grid { display: flex; justify-content: center; gap: 50px; flex-wrap: wrap; opacity: 0.5; }
+        .clients-grid i { font-size: 2rem; }
+        
+        .services { padding: 100px 0; }
+        .section-header { text-align: center; margin-bottom: 4rem; }
+        .section-header h2 { font-size: 3rem; font-weight: 700; margin-bottom: 1rem; }
+        .bento-grid { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 300px); gap: 20px; }
+        .card { background: var(--glass); border: 1px solid var(--border); border-radius: 24px; padding: 2rem; position: relative; overflow: hidden; transition: 0.3s; }
+        .card:hover { border-color: var(--primary); transform: translateY(-5px); }
+        .card-large { grid-column: span 2; }
+        .card h3 { font-size: 1.5rem; margin-bottom: 1rem; }
+        .card p { color: var(--text-muted); }
+        .card-icon { font-size: 2rem; color: var(--primary); margin-bottom: 1.5rem; background: rgba(99, 102, 241, 0.1); width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; border-radius: 15px; }
+        
+        .stats { background: #0f0f0f; padding: 80px 0; border-top: 1px solid var(--border); }
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); text-align: center; }
+        .stat-number { font-size: 3rem; font-weight: 800; color: #fff; }
+        .stat-label { color: var(--text-muted); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* --- FOOTER ACTUALIZADO CON REDES --- */
+        footer { padding: 60px 0 30px; border-top: 1px solid var(--border); margin-top: 50px; background: #080808; }
+        .footer-content { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; }
+        
+        /* Estilos de los iconos de redes */
+        .social-icons { display: flex; gap: 15px; }
+        .social-btn {
+            width: 45px; height: 45px; border-radius: 50%;
+            background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: center;
+            color: var(--text-muted); text-decoration: none; transition: 0.3s; font-size: 1.2rem;
+        }
+        .social-btn:hover { background: var(--primary); color: #fff; transform: translateY(-3px); border-color: var(--primary); box-shadow: 0 5px 15px rgba(99, 102, 241, 0.3); }
+
+        .copyright { width: 100%; text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--border); color: #555; font-size: 0.85rem; }
+
+        @media (max-width: 900px) {
+            .hero h1 { font-size: 3rem; }
+            .browser-window { width: 100%; height: 350px; }
+            .badge-left, .badge-right { display: none; }
+            .bento-grid { grid-template-columns: 1fr; grid-template-rows: auto; }
+            .card-large { grid-column: span 1; }
+            .stats-grid { grid-template-columns: 1fr 1fr; gap: 30px; }
+            .footer-content { flex-direction: column; text-align: center; }
+            .nav-links { display: none; }
+            .sidebar-code { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="container nav-container">
+            <div class="logo">
+                <i class="fas fa-cube" style="color: var(--primary);"></i> AURA
+            </div>
+            <div class="nav-links">
+                <a href="#">Soluciones</a>
+                <a href="#">Nosotros</a>
+                <a href="#">Precios</a>
+                <a href="#">Contacto</a>
+            </div>
+            <a href="#" class="btn btn-primary" style="padding: 8px 20px;">Empezar</a>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-glow"></div>
+        <div class="container">
+            <span style="color: var(--primary); font-weight: 700; letter-spacing: 1px; text-transform: uppercase;">
+                Agencia Digital Premium
+            </span>
+            <h1>Construimos el futuro <br> <span class="gradient-text">de tu negocio digital.</span></h1>
+            <p>Diseño web de alto impacto, desarrollo a medida y estrategias de crecimiento para marcas que buscan liderar su industria.</p>
+            
+            <div class="hero-buttons">
+                <a href="#" class="btn btn-primary">Agendar Consultoría</a>
+                <a href="#" class="btn btn-outline">Ver Proyectos</a>
+            </div>
+
+            <div class="hero-visual-wrapper">
+                <div class="floating-badge badge-left">
+                    <div class="icon-box"><i class="fas fa-bolt"></i></div>
+                    <div>Ultra Rápido</div>
+                </div>
+
+                <div class="browser-window">
+                    <div class="window-header">
+                        <div class="dots">
+                            <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+                        </div>
+                        <div class="address-bar">https://tu-sitio-increible.com</div>
+                    </div>
+                    
+                    <div class="window-body">
+                        <div class="sidebar-code">
+                            <div class="code-line"><span class="keyword">import</span> React <span class="keyword">from</span> <span class="string">'react'</span>;</div>
+                            <div class="code-line"><span class="keyword">export default</span> <span class="keyword">function</span> App() {</div>
+                            <div class="code-line">&nbsp;&nbsp;<span class="keyword">return</span> (</div>
+                            <div class="code-line">&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="keyword">div</span> className=<span class="string">"hero"</span>&gt;</div>
+                            <div class="code-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="keyword">h1</span>&gt;Hola Mundo&lt;/<span class="keyword">h1</span>&gt;</div>
+                            <div class="code-line">&nbsp;&nbsp;&nbsp;&nbsp;&lt;/<span class="keyword">div</span>&gt;</div>
+                            <div class="code-line">&nbsp;&nbsp;);</div>
+                            <div class="code-line">}</div>
+                            <div class="code-line" style="margin-top: 20px; color: #555;">// Código limpio y optimizado</div>
+                        </div>
+                        
+                        <div class="main-visual">
+                            <div class="dash-header"></div>
+                            <div class="dash-grid">
+                                <div class="dash-card">
+                                    <div style="color: #aaa; font-size: 0.8rem; margin-bottom: 5px;">Visitas Mensuales</div>
+                                    <div style="font-size: 1.5rem; font-weight: 700;">+45.2K <span style="color: #4ade80; font-size: 0.9rem;">▲ 12%</span></div>
+                                </div>
+                                <div class="dash-card">
+                                    <div style="margin-bottom: auto; color: #aaa; font-size: 0.8rem;">Estadísticas</div>
+                                    <div class="bars-container">
+                                        <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="floating-badge badge-right">
+                    <div class="icon-box" style="background: var(--secondary);"><i class="fas fa-check"></i></div>
+                    <div>100% SEO Ready</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="clients">
+        <div class="container clients-grid">
+            <i class="fab fa-aws"></i>
+            <i class="fab fa-google"></i>
+            <i class="fab fa-stripe"></i>
+            <i class="fab fa-spotify"></i>
+            <i class="fab fa-airbnb"></i>
+        </div>
+    </section>
+
+    <section class="services">
+        <div class="container">
+            <div class="section-header">
+                <h2>Todo lo que necesitas <br>para escalar.</h2>
+                <p style="color: var(--text-muted);">Nuestras soluciones integrales cubren desde el diseño hasta el código.</p>
+            </div>
+            <div class="bento-grid">
+                <div class="card card-large">
+                    <div class="card-icon"><i class="fas fa-pen-nib"></i></div>
+                    <h3>Diseño UI/UX Interactivo</h3>
+                    <p>Interfaces que enamoran. Diseñamos experiencias de usuario fluidas, intuitivas y visualmente impactantes.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon"><i class="fas fa-code"></i></div>
+                    <h3>Desarrollo Web</h3>
+                    <p>Código limpio, rápido y optimizado para SEO usando las últimas tecnologías.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon"><i class="fas fa-mobile-alt"></i></div>
+                    <h3>Mobile First</h3>
+                    <p>Tu sitio se verá perfecto en cualquier dispositivo.</p>
+                </div>
+                <div class="card card-large" style="grid-column: 2 / span 2;">
+                    <div class="card-icon"><i class="fas fa-shopping-cart"></i></div>
+                    <h3>E-Commerce Escalable</h3>
+                    <p>Tiendas en línea robustas con pasarelas de pago integradas y gestión de inventario.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="stats">
+        <div class="container stats-grid">
+            <div><div class="stat-number">300+</div><div class="stat-label">Proyectos Entregados</div></div>
+            <div><div class="stat-number">98%</div><div class="stat-label">Clientes Felices</div></div>
+            <div><div class="stat-number">5 Años</div><div class="stat-label">Experiencia</div></div>
+            <div><div class="stat-number">24/7</div><div class="stat-label">Soporte Técnico</div></div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="logo" style="font-size: 1.2rem;">
+                    <i class="fas fa-cube" style="color: var(--primary);"></i> AURA
+                </div>
+
+                <div class="social-icons">
+                    <a href="#" class="social-btn"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-btn"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#" class="social-btn"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-btn"><i class="fab fa-whatsapp"></i></a>
+                </div>
+
+                <div class="footer-links" style="display: flex; gap: 20px;">
+                    <a href="#" style="color: #666; text-decoration: none; font-size: 0.9rem;">Términos</a>
+                    <a href="#" style="color: #666; text-decoration: none; font-size: 0.9rem;">Privacidad</a>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                &copy; 2026 Aura Digital Agency. Todos los derechos reservados.
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

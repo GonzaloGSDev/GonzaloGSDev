@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo: Dashboard Operacional | Minería</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --bg: #0f172a; --card: #1e293b; --text: #f8fafc; --accent: #00d2ff; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; }
+        
+        /* Header */
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid #334155; padding-bottom: 20px; }
+        .back-btn { text-decoration: none; color: var(--accent); font-weight: bold; }
+        
+        /* Stats Grid */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .stat-card { background: var(--card); padding: 20px; border-radius: 10px; border-left: 4px solid var(--accent); }
+        .stat-card h3 { margin: 0; font-size: 0.9rem; color: #94a3b8; }
+        .stat-card p { margin: 5px 0 0; font-size: 1.8rem; font-weight: bold; }
+
+        /* Dashboard Layout */
+        .dashboard-main { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+        .chart-container { background: var(--card); padding: 20px; border-radius: 10px; }
+        
+        /* Tabla */
+        .table-container { background: var(--card); padding: 20px; border-radius: 10px; margin-top: 20px; overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #334155; }
+        th { color: var(--accent); }
+        .status-ok { color: #4ade80; font-weight: bold; }
+        .status-absent { color: #f87171; font-weight: bold; }
+
+        @media (max-width: 768px) { .dashboard-main { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div>
+            <a href="../../index.html" class="back-btn"><i class="fas fa-arrow-left"></i> Volver al Portafolio</a>
+            <h1><i class="fas fa-helmet-safety"></i> Sistema de Gestión Operacional</h1>
+            <p style="color: #848a92; font-size: 0.9rem;">Vista Demo (Datos Sanitizados para Confidencialidad)</p>
+        </div>
+        <div>
+            <button style="padding: 10px 20px; background: var(--accent); border: none; font-weight: bold; cursor: pointer; border-radius: 5px;">
+                <i class="fas fa-download"></i> Exportar Reporte
+            </button>
+        </div>
+    </header>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <h3>Total Trabajadores Activos</h3>
+            <p>142</p>
+        </div>
+        <div class="stat-card">
+            <h3>Asistencia Hoy</h3>
+            <p>98.5%</p>
+        </div>
+        <div class="stat-card">
+            <h3>HHT Acumuladas (Mes)</h3>
+            <p>24,560</p>
+        </div>
+        <div class="stat-card">
+            <h3>Cursos por Vencer</h3>
+            <p style="color: #fbbf24;">5</p>
+        </div>
+    </div>
+
+    <div class="dashboard-main">
+        <div class="chart-container">
+            <h3><i class="fas fa-chart-line"></i> Evolución HHT (Últimos 6 Meses)</h3>
+            <canvas id="hhtChart"></canvas>
+        </div>
+        <div class="chart-container">
+            <h3><i class="fas fa-chart-pie"></i> Distribución por Faena</h3>
+            <canvas id="faenaChart"></canvas>
+        </div>
+    </div>
+
+    <div class="table-container">
+        <h3><i class="fas fa-users"></i> Registro de Asistencia Reciente (Tiempo Real)</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Trabajador</th>
+                    <th>Cargo</th>
+                    <th>Faena</th>
+                    <th>Entrada</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>#8901</td>
+                    <td>Juan Pérez G.</td>
+                    <td>Operador Maquinaria</td>
+                    <td>Faena Norte</td>
+                    <td>07:45 AM</td>
+                    <td class="status-ok">Presente</td>
+                </tr>
+                <tr>
+                    <td>#8902</td>
+                    <td>María López S.</td>
+                    <td>Prevencionista</td>
+                    <td>Oficina Central</td>
+                    <td>08:00 AM</td>
+                    <td class="status-ok">Presente</td>
+                </tr>
+                <tr>
+                    <td>#8903</td>
+                    <td>Carlos Díaz R.</td>
+                    <td>Electromecánico</td>
+                    <td>Faena Norte</td>
+                    <td>--:--</td>
+                    <td class="status-absent">Ausente (Licencia)</td>
+                </tr>
+                <tr>
+                    <td>#8904</td>
+                    <td>Ana Torres M.</td>
+                    <td>Administrativo</td>
+                    <td>Remoto</td>
+                    <td>08:05 AM</td>
+                    <td class="status-ok">Presente</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // Configuración de Gráficos Mockup con Chart.js
+        
+        // 1. Gráfico de HHT
+        const ctx = document.getElementById('hhtChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Ago', 'Sep', 'Oct', 'Nov', 'Dic', 'Ene'],
+                datasets: [{
+                    label: 'Horas Hombre Trabajadas',
+                    data: [3800, 4100, 3950, 4500, 4800, 4200],
+                    borderColor: '#00d2ff',
+                    backgroundColor: 'rgba(0, 210, 255, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { grid: { color: '#334155' } },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+
+        // 2. Gráfico de Faenas
+        const ctx2 = document.getElementById('faenaChart').getContext('2d');
+        new Chart(ctx2, {
+            type: 'doughnut',
+            data: {
+                labels: ['Faena Norte', 'Oficina', 'Terreno Sur'],
+                datasets: [{
+                    data: [55, 30, 15],
+                    backgroundColor: ['#00d2ff', '#3a7bd5', '#94a3b8'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { position: 'bottom', labels: { color: '#fff' } } }
+            }
+        });
+    </script>
+</body>
+</html>
